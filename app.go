@@ -6,16 +6,28 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/line/line-bot-sdk-go/linebot"
 )
 
 var botClient *linebot.Client
+var accessToken string
+var channelSecret string
 
 func main() {
+	accessToken = os.Getenv("accessToken")
+	if accessToken == "" {
+		log.Fatalf("accessToken not found!")
+	}
+	channelSecret = os.Getenv("channelSecret")
+	if channelSecret == "" {
+		log.Fatalf("channelSecret not found!")
+	}
+
 	var err error
-	botClient, err = linebot.New("", "")
+	botClient, err = linebot.New(channelSecret, accessToken)
 	if err != nil {
 		log.Fatalf("Failed to create bot handler")
 		return
