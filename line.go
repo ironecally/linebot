@@ -16,13 +16,13 @@ var accessToken string
 var channelSecret string
 
 func initLine() {
-	accessToken = os.Getenv("accessToken")
+	accessToken = os.Getenv("line_accessToken")
 	if accessToken == "" {
-		log.Fatalf("accessToken not found!")
+		log.Fatalf("line_accessToken not found!")
 	}
-	channelSecret = os.Getenv("channelSecret")
+	channelSecret = os.Getenv("line_channelSecret")
 	if channelSecret == "" {
-		log.Fatalf("channelSecret not found!")
+		log.Fatalf("line_channelSecret not found!")
 	}
 
 	var err error
@@ -32,16 +32,21 @@ func initLine() {
 		return
 	}
 }
-func testHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func testLineHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		panic(err)
+		responseAPI(w, err.Error())
+		return
 	}
-	log.Printf("got : %s!\n", string(body))
+
+	if len(body) > 1 {
+		log.Printf("got : %s!\n", string(body))
+	}
 
 	events, err := botClient.ParseRequest(r)
 	if err != nil {
-		responseAPI(w, err)
+		responseAPI(w, err.Error())
+		return
 	}
 
 	for _, event := range events {
@@ -50,6 +55,8 @@ func testHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		}
 	}
 
+	responseAPI(w, map[string]interface{}{"success": true})
+	return
 }
 
 func responseAPI(w http.ResponseWriter, v interface{}) {

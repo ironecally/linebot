@@ -11,7 +11,8 @@ func main() {
 	initLine()
 
 	router := httprouter.New()
-	router.GET("/test", testHandler)
+	router.GET("/line/test", testLineHandler)
+
 	http.ListenAndServe(":8080", router)
 	fmt.Println("httprouter is on! やった！！")
 }
