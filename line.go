@@ -16,6 +16,7 @@ var accessToken string
 var channelSecret string
 
 func initLine() {
+	log.Println("initializing line")
 	accessToken = os.Getenv("line_accessToken")
 	if accessToken == "" {
 		log.Fatalf("line_accessToken not found!")
